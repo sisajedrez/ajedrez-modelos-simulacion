@@ -1,0 +1,181 @@
+# Documento de Gestión de la Configuración (GC)
+**Proyecto:** Ajedrez + Stockfish — Modelos y Simulación
+
+> Nota: asumo Node LTS y PostgreSQL 15+ como versiones de referencia, y Docker
+> para el entorno compartido de pruebas. Si el equipo ya definió otras
+> versiones o herramientas (por Arquitectura del Sistema), ajustá esta parte
+> antes de repartirlo.
+
+---
+
+## 1. Estructura del repositorio
+
+```
+proyecto-ajedrez/
+├── frontend/                  # Next.js
+│   ├── components/
+│   │   ├── Tablero/
+│   │   └── SelectorModo/
+│   ├── pages/
+│   └── tests/                 # pruebas unitarias frontend
+├── backend/                   # Express
+│   ├── src/
+│   │   ├── controllers/       # rutas: crear partida, enviar jugada, historial
+│   │   ├── engines/           # MotorStockfish, MotorIAPropia
+│   │   ├── validators/        # ValidadorDeJugada
+│   │   ├── models/            # Partida, Jugada, Jugador, ConfiguracionDeDificultad
+│   │   └── routes/
+│   └── tests/                 # pruebas unitarias backend
+├── db/
+│   ├── schema.sql             # modelo físico de Modelado de Datos
+│   └── seeds/
+├── docs/
+│   ├── analisis-requisitos.md
+│   ├── arquitectura.md
+│   ├── diseno-tecnico.md
+│   ├── documento-GC.md
+│   └── informe-QA.md
+├── tests-integracion/         # pruebas de integración (QA)
+├── docker-compose.yml         # entorno compartido de pruebas
+├── .env.example
+└── README.md
+```
+
+### Convención de ramas
+| Rama | Uso |
+|---|---|
+| `main` | Código estable, lo que se entrega al profesor |
+| `develop` | Integración de features antes de pasar a `main` |
+| `feature/<nombre-corto>` | Una funcionalidad nueva, ej. `feature/motor-stockfish`, `feature/validador-jugada`, `feature/tablero-frontend` |
+| `fix/<nombre-corto>` | Corrección de un bug puntual |
+
+**Reglas:**
+- Nadie hace commit directo a `main` ni a `develop`.
+- Todo cambio entra por Pull Request, revisado y aprobado por el Tech Lead.
+- Una rama = una responsabilidad (no mezclar frontend y motor de Stockfish en la misma rama).
+
+### Convención de commits
+Prefijo + descripción corta en presente:
+```
+feat: implementa MotorStockfish con protocolo UCI
+fix: corrige detección de jaque mate por ahogado
+docs: agrega guía de entorno local
+test: agrega pruebas unitarias para ValidadorDeJugada
+```
+
+---
+
+## 2. Entorno local — cómo levantarlo
+
+### Requisitos previos
+- **Node.js** (LTS, ej. v20.x) y npm
+- **PostgreSQL** 15 o superior
+- **Binario de Stockfish**
+
+### Instalar Stockfish
+| SO | Cómo |
+|---|---|
+| Windows | Descargar el ejecutable desde stockfishchess.org y guardarlo en una carpeta fija del proyecto, ej. `backend/bin/stockfish.exe` |
+| macOS | `brew install stockfish` |
+| Linux | `sudo apt install stockfish` (o descargar el binario oficial) |
+
+La ruta al binario se configura por variable de entorno, nunca hardcodeada:
+```
+STOCKFISH_PATH=/ruta/a/stockfish
+```
+
+### PostgreSQL local
+```bash
+# crear la base
+createdb ajedrez_db
+
+# cargar el esquema (una vez que Modelado de Datos entregue schema.sql)
+psql -d ajedrez_db -f db/schema.sql
+```
+
+### Variables de entorno (`.env.example`)
+```
+DATABASE_URL=postgresql://usuario:password@localhost:5432/ajedrez_db
+STOCKFISH_PATH=/ruta/a/stockfish
+PORT=4000
+```
+Cada dev copia este archivo a `.env` y completa sus valores locales. `.env` va en `.gitignore`, `.env.example` sí se versiona.
+
+### Levantar el proyecto
+```bash
+# backend
+cd backend
+npm install
+npm run dev
+
+# frontend (en otra terminal)
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+## 3. Entorno compartido para pruebas de integración
+
+**Problema que resuelve:** que las pruebas de integración no dependan de la PC de un solo desarrollador (versión de Postgres, si tiene o no Stockfish instalado, etc.).
+
+### Opción recomendada: Docker Compose
+`docker-compose.yml` en la raíz, con un Postgres de pruebas aislado:
+
+```yaml
+version: "3.8"
+services:
+  postgres-test:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ajedrez_test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    ports:
+      - "5433:5432"
+```
+
+Correr las pruebas de integración contra este contenedor:
+```bash
+docker compose up -d postgres-test
+DATABASE_URL=postgresql://test:test@localhost:5433/ajedrez_test npm run test:integration
+docker compose down
+```
+
+### Opcional: CI automático (GitHub Actions)
+Si el equipo sube el repo a GitHub, un workflow simple corre las pruebas en cada Pull Request, sin depender de ninguna PC:
+
+```yaml
+# .github/workflows/tests.yml
+name: tests
+on: [pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: ajedrez_test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        ports: ["5432:5432"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci --prefix backend
+      - run: npm run test --prefix backend
+```
+
+---
+
+## Checklist para un integrante nuevo (o si cambia quien ocupa un rol)
+1. Cloná el repo y creá tu `.env` a partir de `.env.example`.
+2. Instalá Node, PostgreSQL y Stockfish según la sección 2.
+3. Corré `npm install` en `frontend/` y `backend/`.
+4. Levantá la base local y cargá `db/schema.sql`.
+5. Antes de programar, creá tu rama desde `develop` con la convención de nombres de la sección 1.
+6. Para correr pruebas de integración, usá el Docker Compose de la sección 3 — no tu Postgres local.
