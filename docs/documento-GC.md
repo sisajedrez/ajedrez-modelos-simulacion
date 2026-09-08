@@ -1,11 +1,5 @@
 # Documento de Gestión de la Configuración (GC)
 **Proyecto:** Ajedrez + Stockfish — Modelos y Simulación
-
-> Nota: asumo Node LTS y PostgreSQL 15+ como versiones de referencia, y Docker
-> para el entorno compartido de pruebas. Si el equipo ya definió otras
-> versiones o herramientas (por Arquitectura del Sistema), ajustá esta parte
-> antes de repartirlo.
-
 ---
 
 ## 1. Estructura del repositorio
