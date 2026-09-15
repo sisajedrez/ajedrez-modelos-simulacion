@@ -1,8 +1,24 @@
 # Documento de Gestión de la Configuración (GC)
 **Proyecto:** Ajedrez + Stockfish — Modelos y Simulación
+
+> Nota: el stack (Next.js + Express + PostgreSQL) ya está confirmado por el
+> Documento de Arquitectura v1.1 de Thomas Cardarelli. Las versiones puntuales
+> de Node y PostgreSQL siguen siendo referencia de GC hasta que Arquitectura
+> las fije.
+
 ---
 
-## 1. Estructura del repositorio
+## 1. Control de versiones y repositorio
+
+Usamos **Git** como sistema de control de versiones, alojado en **GitHub**.
+
+**Repositorio del proyecto:**
+`https://github.com/sisajedrez/ajedrez-modelos-simulacion.git`
+
+- `main`: rama principal, siempre con código estable — es lo que se entrega al profesor.
+- Todo el trabajo en curso pasa primero por `develop` y por ramas `feature/*` o `fix/*` antes de llegar a `main` (convención completa más abajo).
+
+### Estructura de carpetas
 
 ```
 proyecto-ajedrez/
@@ -57,14 +73,43 @@ docs: agrega guía de entorno local
 test: agrega pruebas unitarias para ValidadorDeJugada
 ```
 
+### Convención de nombres para la base de datos
+Sobre las entidades definidas por Modelado de Datos (`Partida`, `Jugada`,
+`Jugador/Perfil`, `ConfiguracionDeDificultad`):
+
+| Elemento | Convención | Ejemplo |
+|---|---|---|
+| Tablas | snake_case, plural | `partidas`, `jugadas`, `jugadores`, `configuraciones_dificultad` |
+| Columnas | snake_case | `fecha_inicio`, `resultado_final`, `nivel_dificultad` |
+| Clave primaria | siempre `id` | `id` |
+| Clave foránea | `<entidad_singular>_id` | `partida_id`, `jugador_id` |
+| Estados fijos / enums | MAYÚSCULAS con guión bajo | `EN_PROGRESO`, `FINALIZADA`, `INTERRUMPIDA` (ver RN-01 y Documento de Arquitectura v1.1 — la IA propia solo entrena con partidas `FINALIZADA`) |
+
+Modelado de Datos es quien diseña el modelo físico final; esta tabla fija
+solo el *estilo* de nombres para que todas las tablas y columnas sean
+consistentes entre sí.
+
 ---
 
 ## 2. Entorno local — cómo levantarlo
 
 ### Requisitos previos
-- **Node.js** (LTS, ej. v20.x) y npm
+- **Node.js** (LTS, ej. v20.x) y npm 10.x
 - **PostgreSQL** 15 o superior
-- **Binario de Stockfish**
+- **Binario de Stockfish** (motor elegido por Arquitectura)
+
+### Librerías principales y versiones
+| Librería | Dónde se usa | Versión de referencia |
+|---|---|---|
+| Next.js | `frontend/` | 14.x |
+| Express | `backend/` | 4.19.x |
+| `pg` (node-postgres) | `backend/`, acceso a PostgreSQL | 8.x |
+| `chess.js` | `backend/`, aislada detrás de la Fachada `Tablero` (ver Documento de Arquitectura v1.1) | 1.x |
+
+Estas son versiones de referencia fijadas por GC para evitar que cada dev
+instale una distinta. Si Arquitectura o Diseño Técnico necesitan otra
+versión puntual, se actualiza esta tabla y se avisa al equipo — no se cambia
+en silencio en un solo `package.json`.
 
 ### Instalar Stockfish
 | SO | Cómo |
