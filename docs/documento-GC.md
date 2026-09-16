@@ -1,4 +1,11 @@
-# Guía del Proyecto — Ajedrez con IA
+# Documento de Gestión de la Configuración (GC)
+
+Proyecto: Sistema de Ajedrez Local con Motores e IA Basada en Datos
+
+Encargado: Facundo Olivera
+
+Referencia: Alineado con Documento de Arquitectura de Software (SAD v1.2 - 15/09/2026) y Especificación de Requisitos (RN-01 a RN-04, CU-01 a CU-06).
+
 
 ## 1. Convención de Ramas
 
