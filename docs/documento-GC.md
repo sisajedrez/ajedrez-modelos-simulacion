@@ -1,22 +1,18 @@
-# Documento de Gestión de la Configuración (GC)
-**Proyecto:** Ajedrez + Stockfish — Modelos y Simulación
+Documento de Gestión de la Configuración (GC)
+Proyecto: Sistema de Ajedrez Local con Motores e IA Basada en Datos
 
-> Nota: el stack (Next.js + Express + PostgreSQL) ya está confirmado por el
-> Documento de Arquitectura v1.1 de Thomas Cardarelli. Las versiones puntuales
-> de Node y PostgreSQL siguen siendo referencia de GC hasta que Arquitectura
-> las fije.
+Encargado: Facundo Olivera
 
----
+Referencia: Alineado con Documento de Arquitectura de Software (SAD v1.2 - 15/09/2026) y Especificación de Requisitos (RN-01 a RN-04, CU-01 a CU-06).
 
-## 1. Control de versiones y repositorio
+1. Control de versiones y repositorio
+Usamos Git como sistema de control de versiones, alojado en GitHub.
 
-Usamos **Git** como sistema de control de versiones, alojado en **GitHub**.
+Repositorio oficial: [https://github.com/sisajedrez/ajedrez-modelos-simulacion.git](https://github.com/sisajedrez/ajedrez-modelos-simulacion.git)
 
-**Repositorio del proyecto:**
-`https://github.com/sisajedrez/ajedrez-modelos-simulacion.git`
+Rama main: Código estable y testeado; representa las entregas formales.
 
-- `main`: rama principal, siempre con código estable — es lo que se entrega al profesor.
-- Todo el trabajo en curso pasa primero por `develop` y por ramas `feature/*` o `fix/*` antes de llegar a `main` (convención completa más abajo).
+Rama develop: Rama de integración de trabajo diario. Ningún cambio entra directamente a main ni a develop sin pasar por un Pull Request revisado por Tech Lead.
 
 ### Estructura de carpetas
 
@@ -51,18 +47,7 @@ proyecto-ajedrez/
 └── README.md
 ```
 
-### Convención de ramas
-| Rama | Uso |
-|---|---|
-| `main` | Código estable, lo que se entrega al profesor |
-| `develop` | Integración de features antes de pasar a `main` |
-| `feature/<nombre-corto>` | Una funcionalidad nueva, ej. `feature/motor-stockfish`, `feature/validador-jugada`, `feature/tablero-frontend` |
-| `fix/<nombre-corto>` | Corrección de un bug puntual |
-
-**Reglas:**
-- Nadie hace commit directo a `main` ni a `develop`.
-- Todo cambio entra por Pull Request, revisado y aprobado por el Tech Lead.
-- Una rama = una responsabilidad (no mezclar frontend y motor de Stockfish en la misma rama).
+Convención de ramasRamaUsomainCódigo en producción/entregable. Protegida contra push directo.developIntegración general de funcionalidades listas para testing.feature/<nombre-corto>Nuevas funcionalidades (ej. feature/uci-stockfish, feature/repository-moves).fix/<nombre-corto>Corrección de fallos puntuales (ej. fix/timeout-stockfish, fix/fen-normalization).Reglas de flujo:Una rama por funcionalidad o corrección.Commits atómicos con la convención estándar: feat:, fix:, docs:, test:, refactor:.
 
 ### Convención de commits
 Prefijo + descripción corta en presente:
