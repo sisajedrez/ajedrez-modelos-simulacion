@@ -47,159 +47,100 @@ proyecto-ajedrez/
 └── README.md
 ```
 
-Convención de ramasRamaUsomainCódigo en producción/entregable. Protegida contra push directo.developIntegración general de funcionalidades listas para testing.feature/<nombre-corto>Nuevas funcionalidades (ej. feature/uci-stockfish, feature/repository-moves).fix/<nombre-corto>Corrección de fallos puntuales (ej. fix/timeout-stockfish, fix/fen-normalization).Reglas de flujo:Una rama por funcionalidad o corrección.Commits atómicos con la convención estándar: feat:, fix:, docs:, test:, refactor:.
+Convención de RamasRamaUsomainCódigo en producción/entregable. Protegida contra commits directos.developIntegración general de funcionalidades listas para testing conjunto.feature/<nombre-corto>Nuevas funcionalidades (ej. feature/uci-stockfish, feature/repository-moves).fix/<nombre-corto>Corrección de fallos puntuales (ej. fix/timeout-stockfish, fix/fen-normalization).Reglas de contribución:Queda prohibido el commit directo sobre main y develop.Todo cambio se incorpora mediante Pull Request aprobado por el Tech Lead.Principio de responsabilidad única: una rama = una feature o corrección específica.Formato de commits: prefijo semántico en presente (feat:, fix:, docs:, test:, refactor:).Convención de Nomenclatura en Base de Datos (PostgreSQL)ElementoConvenciónEjemploTablassnake_case, pluralpartidas, jugadasColumnassnake_casefecha_inicio, resultado_final, fen_before, fen_afterClave primariaSiempre idid (UUID o BIGSERIAL)Claves foráneas<entidad_singular>_idpartida_idEstados / EnumsMayúsculas con guion bajoEN_PROGRESO, FINALIZADA, INTERRUMPIDARegla de integridad (RN-01 / SAD): El proceso de entrenamiento y consulta de la IA Propia debe filtrar estrictamente registros con WHERE partidas.estado = 'FINALIZADA'. Las partidas en estado EN_PROGRESO o INTERRUMPIDA persisten para auditoría y tolerancia a fallos, pero se excluyen del árbol de aprendizaje.2. Entorno Local — Puesta en MarchaRequisitos PreviosNode.js: v20.x LTS y npm: 10.xPostgreSQL: 15 o superior instalado localmenteMotor Stockfish: Binario oficial compatible con el sistema operativo anfitriónLibrerías Principales y Versiones de ReferenciaMódulo / LibreríaUbicaciónVersiónPropósitoNext.jsfrontend/14.xRenderizado, cliente visual interactivo e interfazExpressbackend/4.19.xAPI REST, orquestación de partidas y control de turnospg (node-postgres)backend/8.xDriver nativo de conexión y pool a PostgreSQLchess.jsbackend/ & frontend/1.x-betaMotor de reglas formales encapsulado tras Fachada TableroInstalación de StockfishEl backend ejecuta el motor como subproceso local (child_process.spawn) mediante pipes estándar (stdin/stdout) utilizando el protocolo UCI. No utiliza conexiones de red.Windows: Descargar el binario oficial desde stockfishchess.org y ubicarlo en backend/bin/stockfish.exe.macOS: brew install stockfish o colocar el binario compilado en backend/bin/stockfish.Linux: sudo apt-get install stockfish o descarga del binario nativo.La ruta absoluta o relativa al ejecutable debe configurarse mediante variables de entorno, sin hardcodear rutas en el código fuente.Variables de Entorno (.env.example)Crear un archivo .env dentro del directorio backend/ a partir del siguiente esquema:Bash# Configuración del Servidor Express
+PORT=4000
+NODE_ENV=development
+FRONTEND_URL=http://localhost:3000
 
-### Convención de commits
-Prefijo + descripción corta en presente:
-```
-feat: implementa MotorStockfish con protocolo UCI
-fix: corrige detección de jaque mate por ahogado
-docs: agrega guía de entorno local
-test: agrega pruebas unitarias para ValidadorDeJugada
-```
+# Base de Datos PostgreSQL Local
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ajedrez_db
 
-### Convención de nombres para la base de datos
-Sobre las entidades definidas por Modelado de Datos (`Partida`, `Jugada`,
-`Jugador/Perfil`, `ConfiguracionDeDificultad`):
+# Motor Stockfish (Protocolo UCI)
+STOCKFISH_PATH=/ruta/hacia/el/binario/stockfish
+STOCKFISH_MOVETIME_MS=1000
+STOCKFISH_TIMEOUT_MS=3000
 
-| Elemento | Convención | Ejemplo |
-|---|---|---|
-| Tablas | snake_case, plural | `partidas`, `jugadas`, `jugadores`, `configuraciones_dificultad` |
-| Columnas | snake_case | `fecha_inicio`, `resultado_final`, `nivel_dificultad` |
-| Clave primaria | siempre `id` | `id` |
-| Clave foránea | `<entidad_singular>_id` | `partida_id`, `jugador_id` |
-| Estados fijos / enums | MAYÚSCULAS con guión bajo | `EN_PROGRESO`, `FINALIZADA`, `INTERRUMPIDA` (ver RN-01 y Documento de Arquitectura v1.1 — la IA propia solo entrena con partidas `FINALIZADA`) |
-
-Modelado de Datos es quien diseña el modelo físico final; esta tabla fija
-solo el *estilo* de nombres para que todas las tablas y columnas sean
-consistentes entre sí.
-
----
-
-## 2. Entorno local — cómo levantarlo
-
-### Requisitos previos
-- **Node.js** (LTS, ej. v20.x) y npm 10.x
-- **PostgreSQL** 15 o superior
-- **Binario de Stockfish** (motor elegido por Arquitectura)
-
-### Librerías principales y versiones
-| Librería | Dónde se usa | Versión de referencia |
-|---|---|---|
-| Next.js | `frontend/` | 14.x |
-| Express | `backend/` | 4.19.x |
-| `pg` (node-postgres) | `backend/`, acceso a PostgreSQL | 8.x |
-| `chess.js` | `backend/`, aislada detrás de la Fachada `Tablero` (ver Documento de Arquitectura v1.1) | 1.x |
-
-Estas son versiones de referencia fijadas por GC para evitar que cada dev
-instale una distinta. Si Arquitectura o Diseño Técnico necesitan otra
-versión puntual, se actualiza esta tabla y se avisa al equipo — no se cambia
-en silencio en un solo `package.json`.
-
-### Instalar Stockfish
-| SO | Cómo |
-|---|---|
-| Windows | Descargar el ejecutable desde stockfishchess.org y guardarlo en una carpeta fija del proyecto, ej. `backend/bin/stockfish.exe` |
-| macOS | `brew install stockfish` |
-| Linux | `sudo apt install stockfish` (o descargar el binario oficial) |
-
-La ruta al binario se configura por variable de entorno, nunca hardcodeada:
-```
-STOCKFISH_PATH=/ruta/a/stockfish
-```
-
-### PostgreSQL local
-```bash
-# crear la base
+# Servicio de IA Propia (Parametrización distribuida)
+AI_SERVICE_URL=[http://127.0.0.1:8000](http://127.0.0.1:8000)
+Inicialización de Base de Datos y SemillasBash# 1. Creación de la base relacional
 createdb ajedrez_db
 
-# cargar el esquema (una vez que Modelado de Datos entregue schema.sql)
+# 2. Ejecución del esquema DDL
 psql -d ajedrez_db -f db/schema.sql
-```
 
-### Variables de entorno (`.env.example`)
-```
-DATABASE_URL=postgresql://usuario:password@localhost:5432/ajedrez_db
-STOCKFISH_PATH=/ruta/a/stockfish
-PORT=4000
-```
-Cada dev copia este archivo a `.env` y completa sus valores locales. `.env` va en `.gitignore`, `.env.example` sí se versiona.
+# 3. Carga atómica e idempotente del dataset inicial en PGN (RN-04)
+npm run seed --prefix backend
+3. Entorno Compartido para Pruebas de IntegraciónPara evitar discrepancias entre entornos locales y garantizar pruebas automatizadas aisladas, se define un servicio descartable con Docker Compose.Archivo docker-compose.ymlYAMLversion: "3.8"
 
-### Levantar el proyecto
-```bash
-# backend
-cd backend
-npm install
-npm run dev
-
-# frontend (en otra terminal)
-cd frontend
-npm install
-npm run dev
-```
-
----
-
-## 3. Entorno compartido para pruebas de integración
-
-**Problema que resuelve:** que las pruebas de integración no dependan de la PC de un solo desarrollador (versión de Postgres, si tiene o no Stockfish instalado, etc.).
-
-### Opción recomendada: Docker Compose
-`docker-compose.yml` en la raíz, con un Postgres de pruebas aislado:
-
-```yaml
-version: "3.8"
 services:
   postgres-test:
-    image: postgres:15
+    image: postgres:15-alpine
+    container_name: ajedrez_postgres_test
     environment:
       POSTGRES_DB: ajedrez_test
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
     ports:
       - "5433:5432"
-```
+    volumes:
+      - pgdata_test:/var/lib/postgresql/data
 
-Correr las pruebas de integración contra este contenedor:
-```bash
+volumes:
+  pgdata_test:
+Ejecución de Tests de IntegraciónBash# 1. Iniciar base de datos aislada
 docker compose up -d postgres-test
-DATABASE_URL=postgresql://test:test@localhost:5433/ajedrez_test npm run test:integration
+
+# 2. Correr la suite de pruebas apuntando al puerto 5433
+DATABASE_URL=postgresql://test_user:test_password@localhost:5433/ajedrez_test npm run test:integration --prefix backend
+
+# 3. Apagar contenedor al finalizar
 docker compose down
-```
+Pipeline de Integración Continua (.github/workflows/ci.yml)YAMLname: CI Tests
 
-### Opcional: CI automático (GitHub Actions)
-Si el equipo sube el repo a GitHub, un workflow simple corre las pruebas en cada Pull Request, sin depender de ninguna PC:
+on:
+  pull_request:
+    branches: [ develop, main ]
 
-```yaml
-# .github/workflows/tests.yml
-name: tests
-on: [pull_request]
 jobs:
-  test:
+  integration-and-unit-tests:
     runs-on: ubuntu-latest
+
     services:
       postgres:
-        image: postgres:15
+        image: postgres:15-alpine
         env:
           POSTGRES_DB: ajedrez_test
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-        ports: ["5432:5432"]
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configuración de Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm ci --prefix backend
-      - run: npm run test --prefix backend
-```
+          cache: 'npm'
 
----
+      - name: Instalación de dependencias Backend
+        run: npm ci --prefix backend
 
-## Checklist para un integrante nuevo (o si cambia quien ocupa un rol)
-1. Cloná el repo y creá tu `.env` a partir de `.env.example`.
-2. Instalá Node, PostgreSQL y Stockfish según la sección 2.
-3. Corré `npm install` en `frontend/` y `backend/`.
-4. Levantá la base local y cargá `db/schema.sql`.
-5. Antes de programar, creá tu rama desde `develop` con la convención de nombres de la sección 1.
+      - name: Ejecución de pruebas unitarias y de dominio
+        run: npm run test --prefix backend
+
+      - name: Ejecución de pruebas de integración
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/ajedrez_test
+        run: npm run test:integration --prefix backend
+4. Checklist de Onboarding para Nuevos IntegrantesClonar el repositorio y posicionarse en una rama de trabajo derivada de develop:Bashgit checkout -b feature/nombre-tarea develop
+Instalar dependencias en ambas capas:Bashnpm install --prefix frontend && npm install --prefix backend
+Configurar el archivo .env en backend/ tomando como referencia .env.example. Verificar que STOCKFISH_PATH apunte a un binario funcional.Levantar PostgreSQL local, crear la base ajedrez_db, aplicar db/schema.sql y ejecutar npm run seed --prefix backend.Comprobar que los tests pasen localmente ejecutando docker compose up -d postgres-test y corriendo npm run test:integration --prefix backend.
 6. Para correr pruebas de integración, usá el Docker Compose de la sección 3 — no tu Postgres local.
