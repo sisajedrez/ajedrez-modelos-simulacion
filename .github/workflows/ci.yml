@@ -61,7 +61,7 @@ jobs:
 
       - name: Instalar dependencias del backend
         if: steps.check_backend.outputs.has_backend == 'true'
-        run: pnpm --dir backend install --frozen-lockfile --pm-on-fail=warn
+        run: pnpm --dir backend install --frozen-lockfile
 
       - name: Ejecutar pruebas unitarias del backend
         if: steps.check_backend.outputs.has_backend == 'true'
