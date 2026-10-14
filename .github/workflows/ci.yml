@@ -57,11 +57,11 @@ jobs:
         if: steps.check_backend.outputs.has_backend == 'true'
         run: |
           corepack enable
-          corepack prepare pnpm@latest --activate
+          corepack prepare pnpm@10.34.6 --activate
 
       - name: Instalar dependencias del backend
         if: steps.check_backend.outputs.has_backend == 'true'
-        run: pnpm --dir backend install --frozen-lockfile
+        run: pnpm --dir backend install --frozen-lockfile --pm-on-fail=warn
 
       - name: Ejecutar pruebas unitarias del backend
         if: steps.check_backend.outputs.has_backend == 'true'
