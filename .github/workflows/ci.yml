@@ -5,6 +5,9 @@ on:
     branches:
       - develop
       - main
+  push:
+    branches:
+      - develop
 
 jobs:
   backend-tests:
@@ -21,12 +24,16 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U test_user -d ajedrez_test"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
 
     steps:
+      - name: Detener servicio postgres preinstalado en el runner
+        run: |
+          sudo systemctl stop postgresql || true
+
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
@@ -41,27 +48,27 @@ jobs:
           fi
 
       - name: Leer versión de Node desde .nvmrc
-        if: steps:check_backend.outputs.has_backend == 'true'
+        if: steps.check_backend.outputs.has_backend == 'true'
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
 
       - name: Habilitar Corepack y pnpm
-        if: steps:check_backend.outputs.has_backend == 'true'
+        if: steps.check_backend.outputs.has_backend == 'true'
         run: |
           corepack enable
           corepack prepare pnpm@latest --activate
 
       - name: Instalar dependencias del backend
-        if: steps:check_backend.outputs.has_backend == 'true'
+        if: steps.check_backend.outputs.has_backend == 'true'
         run: pnpm --dir backend install --frozen-lockfile
 
       - name: Ejecutar pruebas unitarias del backend
-        if: steps:check_backend.outputs.has_backend == 'true'
+        if: steps.check_backend.outputs.has_backend == 'true'
         run: pnpm --dir backend test
 
       - name: Ejecutar pruebas de integración del backend
-        if: steps:check_backend.outputs.has_backend == 'true'
+        if: steps.check_backend.outputs.has_backend == 'true'
         env:
           DATABASE_URL: postgresql://test_user:test_password@127.0.0.1:5432/ajedrez_test
           NODE_ENV: test
