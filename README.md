@@ -319,6 +319,9 @@ tests-integracion/  Pruebas de integración (QA)
 | Equipo | Integrantes |
 
 |---|---|
+| Tech Lead | Maximo Vinuesa, Bianca Torres |
+
+| Análisis y Requisitos | Facundo Rojo , Andres Rodriguez |
 
 | Arquitectura | Thomas Cardarelli |
 
@@ -330,10 +333,10 @@ tests-integracion/  Pruebas de integración (QA)
 
 | Gestión de la Configuración | Facundo Olivera |
 
+| Frontend | Agustin Rivarola, Tomas Picco, Santiago Ledesma |
+
 | Desarrollo Backend | Marcos Teixido, German Velazquez, Axel Nievas | Máximo Vinuesa |
 
-| Desarrollo Simulación (IA) | Paula Chicher, Lazaro Sanchez, Luciano Sigot |
+| Desarrollo Simulación (IA) | Paula Chiecher, Lazaro Sanchez, Luciano Sigot |
 
 | Calidad y Pruebas (QA) | Agustín Lucero, Franco Calizaya |
-
-| Frontend, Análisis y Requisitos, Tech Lead | *(a completar)* |
