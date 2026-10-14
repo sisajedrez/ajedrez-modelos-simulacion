@@ -1,0 +1,68 @@
+name: CI Tests
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  backend-tests:
+    name: backend-tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: ajedrez_test
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Verificar existencia de backend/package.json
+        id: check_backend
+        run: |
+          if [ -f backend/package.json ]; then
+            echo "has_backend=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_backend=false" >> "$GITHUB_OUTPUT"
+            echo "backend/package.json no existe aún. Omitiendo pasos de Node para finalizar en verde."
+          fi
+
+      - name: Leer versión de Node desde .nvmrc
+        if: steps:check_backend.outputs.has_backend == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Habilitar Corepack y pnpm
+        if: steps:check_backend.outputs.has_backend == 'true'
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Instalar dependencias del backend
+        if: steps:check_backend.outputs.has_backend == 'true'
+        run: pnpm --dir backend install --frozen-lockfile
+
+      - name: Ejecutar pruebas unitarias del backend
+        if: steps:check_backend.outputs.has_backend == 'true'
+        run: pnpm --dir backend test
+
+      - name: Ejecutar pruebas de integración del backend
+        if: steps:check_backend.outputs.has_backend == 'true'
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@127.0.0.1:5432/ajedrez_test
+          NODE_ENV: test
+        run: pnpm --dir backend test:integration
