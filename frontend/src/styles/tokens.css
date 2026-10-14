@@ -1,0 +1,22 @@
+/* =============================================================================
+   tokens.css — Variables de diseño (fuente: 05 · Diseño Gráfico & UX, Perla Quispe)
+   Solo van valores que UX especificó. Lo que falta se marca como PENDIENTE: no se inventa.
+   Los componentes usan estas variables; nunca un color o una fuente escritos a mano.
+   ============================================================================= */
+
+:root {
+  /* --- Color --- */
+  --color-fondo: #0c0f1e;              /* Color de fondo de las pantallas */
+  --color-contorno-accion: #312525;    /* Contorno de "Nueva Partida" y de su botón */
+  --color-vidrio: rgb(231 122 247 / 0.3); /* E77AF7 al 30%: botón "vidrio difuso" */
+  --color-contorno-texto: #000000;     /* Contorno/sombra de "Ajedrez UNViMe" y "¡Bienvenido!" */
+  /* PENDIENTE (UX): hex de Fácil / Medio / Difícil, de las casillas del tablero y del texto. */
+
+  /* --- Tipografía --- */
+  --fuente-titulo: "Jersey 20", sans-serif; /* Solo "Ajedrez UNViMe" */
+  --fuente-texto: "Jersey 15", sans-serif;  /* Todo lo demás */
+
+  /* --- Forma y opacidad --- */
+  --opacidad-tablero-menu: 0.9;        /* Tablero decorativo del menú, para no quitar atención al texto */
+  --radio-esquina: 8px;                /* Esquinas "ligeramente redondeadas" (UX no fija el valor: ajustar) */
+}

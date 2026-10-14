@@ -1,0 +1,2 @@
+# Dependencias del servicio de IA. Las completa Desarrollo Simulación con versiones fijadas
+# (ej. paquete==x.y.z). Ver ai-service/README.md.

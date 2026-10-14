@@ -1,0 +1,24 @@
+# Entorno compartido de pruebas de integración (TEST).
+# Base PostgreSQL descartable: los datos viven en memoria (tmpfs) y se pierden al apagar.
+# Uso:  docker compose up -d --wait   ...   docker compose down -v
+# Detalle en docs/documento-GC.md §7.
+name: ajedrez-test
+
+services:
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: ajedrez_postgres_test
+    environment:
+      POSTGRES_DB: ajedrez_test
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+    ports:
+      # Solo loopback: nunca exponer en 0.0.0.0 (restricción de ejecución local, SAD §2).
+      - "127.0.0.1:5433:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user -d ajedrez_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
