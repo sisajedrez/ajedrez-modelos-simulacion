@@ -49,7 +49,7 @@ tests-integracion/  Pruebas de integración (QA)
 | Modelado y Gestión de Datos | Mateo Vanden, Valentín Faba, Máximo Vinuesa |
 | Diseño Gráfico & UX | Perla Quispe |
 | Gestión de la Configuración | Facundo Olivera |
-| Desarrollo Backend | Marcos Teixido, German Velazquez, Axel Nievas |
+| Desarrollo Backend | Marcos Teixido, German Velazquez, Axel Nievas | Máximo Vinuesa
 | Desarrollo Simulación (IA) | Paula Chicher, Lazaro Sanchez, Luciano Sigot |
 | Calidad y Pruebas (QA) | Agustín Lucero, Franco Calizaya |
 | Frontend, Análisis y Requisitos, Tech Lead | *(a completar)* |
