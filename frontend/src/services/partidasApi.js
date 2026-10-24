@@ -9,6 +9,8 @@ import {
 export const crearPartidasApi = (cliente) => ({
   obtenerPerfiles: async () => normalizarPerfiles(await cliente.get('/difficulty-profiles')),
 
+  listarPartidas: async (params = {}) => cliente.get('/games', params),
+
   crearPartida: async ({ modo, alias, dificultad, color }) => normalizarPartida(
     await cliente.post('/games', {
       mode: modoAApi(modo),

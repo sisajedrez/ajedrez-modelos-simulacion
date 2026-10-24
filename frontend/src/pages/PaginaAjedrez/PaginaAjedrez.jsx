@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FondoParticulas from '../../components/atoms/FondoParticulas/index.js';
 import BotonRendirse from '../../components/molecules/BotonRendirse/index.js';
 import PlacaJugador from '../../components/molecules/PlacaJugador/index.js';
 import CintaParticipantes from '../../components/organisms/CintaParticipantes/index.js';
 import ModalAviso from '../../components/organisms/ModalAviso/index.js';
+import ModalCargarPartida from '../../components/organisms/ModalCargarPartida/index.js';
 import ModalPromocion from '../../components/organisms/ModalPromocion/index.js';
 import ModalRendicion from '../../components/organisms/ModalRendicion/index.js';
 import ModalResultado from '../../components/organisms/ModalResultado/index.js';
@@ -19,6 +20,7 @@ import { partidasApi } from '../../services/index.js';
 import { mensajeDeError } from '../../utils/mensajesError.js';
 import { nivelesDesdePerfiles } from '../../utils/niveles.js';
 import { construirResultado } from '../../utils/resultadoPartida.js';
+import { turnoDesdeFen } from '../../utils/traductores.js';
 import { obtenerOpcionesFaltantes } from '../../utils/validarConfiguracion.js';
 
 const participantes = [
@@ -51,6 +53,11 @@ const PaginaAjedrez = () => {
   const [jugadorRendido, setJugadorRendido] = useState(null);
   const [cierreOculto, setCierreOculto] = useState(false);
   const [partidaGuardada, setPartidaGuardada] = useState(null);
+  const [mostrarModalCargar, setMostrarModalCargar] = useState(false);
+
+  // Reloj de partida: segundos restantes por color
+  const [tiempoBlancas, setTiempoBlancas] = useState(600);
+  const [tiempoNegras, setTiempoNegras] = useState(600);
 
   const cargarNiveles = async () => {
     setErrorNiveles('');
@@ -88,6 +95,10 @@ const PaginaAjedrez = () => {
       ? (Math.random() < 0.5 ? 'w' : 'b')
       : configuracion.color;
 
+    const segs = (Number(configuracion.tiempo) || 10) * 60;
+    setTiempoBlancas(segs);
+    setTiempoNegras(segs);
+
     setCierreOculto(false);
     const creada = await juego.iniciar({
       modo: configuracion.modo,
@@ -98,6 +109,63 @@ const PaginaAjedrez = () => {
     if (creada) setPantalla('partida');
   };
 
+  const handleCargarPartida = async (id) => {
+    const cargada = await juego.cargarOReanudar(id);
+    if (cargada) {
+      if (cargada.nombreBlancas || cargada.nombreNegras) {
+        setNombres({
+          jugadorUno: cargada.nombreBlancas || 'Jugador 1',
+          jugadorDos: cargada.nombreNegras || 'Jugador 2',
+        });
+      }
+      const segs = (Number(configuracion.tiempo) || 10) * 60;
+      setTiempoBlancas(segs);
+      setTiempoNegras(segs);
+      setCierreOculto(false);
+      setMostrarModalCargar(false);
+      setPantalla('partida');
+    }
+  };
+
+  // Cuenta regresiva del reloj según el turno activo en el FEN
+  useEffect(() => {
+    if (
+      pantalla !== 'partida'
+      || juego.finalizada
+      || juego.pausada
+      || juego.cargando
+      || Boolean(partidaGuardada)
+    ) {
+      return;
+    }
+
+    const turnoActual = turnoDesdeFen(partida.fen); // 'w' | 'b'
+
+    const interval = setInterval(() => {
+      if (turnoActual === 'w') {
+        setTiempoBlancas((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            juego.terminarPorTiempo('b');
+            return 0;
+          }
+          return prev - 1;
+        });
+      } else {
+        setTiempoNegras((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            juego.terminarPorTiempo('w');
+            return 0;
+          }
+          return prev - 1;
+        });
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [pantalla, juego.finalizada, juego.pausada, juego.cargando, partidaGuardada, partida.fen]);
+
   const nombreUno = nombres.jugadorUno.trim() || 'Jugador 1';
   const rival = partida.modo === 'jugador'
     ? nombres.jugadorDos.trim() || 'Jugador 2'
@@ -107,6 +175,9 @@ const PaginaAjedrez = () => {
   const niveles = configuracion.modo && configuracion.modo !== 'jugador'
     ? nivelesDesdePerfiles(perfiles)
     : [];
+
+  const segundosUno = partida.colorHumano === 'w' ? tiempoBlancas : tiempoNegras;
+  const segundosRival = partida.colorHumano === 'w' ? tiempoNegras : tiempoBlancas;
 
   const resultado = partida.cierre
     ? construirResultado({
@@ -133,6 +204,7 @@ const PaginaAjedrez = () => {
   const volverAlMenu = () => {
     setJugadorRendido(null);
     setPartidaGuardada(null);
+    setMostrarModalCargar(false);
     juego.descartar();
     setPantalla('menu');
   };
@@ -154,7 +226,10 @@ const PaginaAjedrez = () => {
 
       {pantalla === 'menu' && (
         <PlantillaMenu>
-          <MenuPrincipal onNuevaPartida={abrirConfiguracion} />
+          <MenuPrincipal
+            onHistorialPartidas={() => setMostrarModalCargar(true)}
+            onNuevaPartida={abrirConfiguracion}
+          />
         </PlantillaMenu>
       )}
 
@@ -172,8 +247,8 @@ const PaginaAjedrez = () => {
           />
           <div className="zona-tablero">
             <PlacaJugador
-              etiqueta="Nombre del segundo jugador"
               editable={configuracion.modo === 'jugador'}
+              etiqueta="Nombre del segundo jugador"
               minutos={minutos}
               nombre={
                 configuracion.modo === 'jugador'
@@ -185,8 +260,8 @@ const PaginaAjedrez = () => {
             />
             <Tablero color={configuracion.color === 'b' ? 'b' : 'w'} />
             <PlacaJugador
-              etiqueta="Nombre del primer jugador"
               editable
+              etiqueta="Nombre del primer jugador"
               minutos={minutos}
               nombre={nombres.jugadorUno}
               onCambiarNombre={(nombre) => cambiarNombre('jugadorUno', nombre)}
@@ -200,7 +275,11 @@ const PaginaAjedrez = () => {
         <PlantillaPartida>
           <div className="zona-tablero">
             <div className="fila-jugador">
-              <PlacaJugador minutos={minutos} nombre={rival} />
+              <PlacaJugador
+                minutos={minutos}
+                nombre={rival}
+                segundos={segundosRival}
+              />
               {partida.modo === 'jugador' && !juego.finalizada && (
                 <BotonRendirse
                   nombreJugador={rival}
@@ -216,7 +295,11 @@ const PaginaAjedrez = () => {
               seleccionada={juego.seleccionada}
             />
             <div className="fila-jugador">
-              <PlacaJugador minutos={minutos} nombre={nombreUno} />
+              <PlacaJugador
+                minutos={minutos}
+                nombre={nombreUno}
+                segundos={segundosUno}
+              />
               {!juego.finalizada && (
                 <BotonRendirse
                   nombreJugador={nombreUno}
@@ -234,6 +317,15 @@ const PaginaAjedrez = () => {
             rival={rival}
           />
         </PlantillaPartida>
+      )}
+
+      {mostrarModalCargar && (
+        <ModalCargarPartida
+          cargando={juego.cargando}
+          listarRecientes={partidasApi.listarPartidas}
+          onCargar={handleCargarPartida}
+          onVolver={() => setMostrarModalCargar(false)}
+        />
       )}
 
       {pantalla === 'partida' && jugadorRendido && (

@@ -1,0 +1,15 @@
+{
+  "servers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp"
+    },
+    "engram": {
+      "args": [
+        "mcp",
+        "--tools=agent"
+      ],
+      "command": "C:\\Users\\maxi\\AppData\\Local\\engram\\bin\\engram.exe"
+    }
+  }
+}
