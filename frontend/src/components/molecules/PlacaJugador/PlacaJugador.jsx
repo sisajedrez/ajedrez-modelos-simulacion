@@ -4,6 +4,7 @@ import TiempoReloj from '../../atoms/TiempoReloj/index.js';
 const PlacaJugador = ({
   nombre,
   minutos,
+  segundos,
   editable = false,
   onCambiarNombre,
   onTerminarNombre,
@@ -22,7 +23,7 @@ const PlacaJugador = ({
     ) : (
       <span className="nombre-jugador">{nombre}</span>
     )}
-    <TiempoReloj minutos={minutos} vacio={minutos === 0} />
+    <TiempoReloj minutos={minutos} segundos={segundos} vacio={minutos === 0 && segundos === undefined} />
   </div>
 );
 

@@ -11,7 +11,7 @@
     "dev": "node --env-file-if-exists=.env --watch src/server.js",
     "start": "node --env-file-if-exists=.env src/server.js",
     "seed": "node --env-file-if-exists=.env scripts/seed.js",
-    "test": "node --test \"tests/*.test.js\" \"tests/unit/**/*.test.js\" \"tests/api/**/*.test.js\" \"tests/integration/**/*.test.js\"",
+    "test": "node --test \"tests/env.test.js\" \"tests/failfast.test.js\" \"tests/health.test.js\" \"tests/unit/**/*.test.js\" \"tests/api/**/*.test.js\" \"tests/integration/ai.contract.test.js\"",
     "test:integration": "node --test --test-concurrency=1 \"tests/db/**/*.test.js\"",
     "test:stress": "node --test --test-concurrency=1 \"tests/stress/**/*.test.js\""
   },

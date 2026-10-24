@@ -105,6 +105,58 @@ export const usePartida = (api) => {
     }
   };
 
+  const cargarOReanudar = async (id) => {
+    setCargando(true);
+    setError(null);
+    limpiarSeleccion();
+    try {
+      const detalle = await api.obtenerPartida(id);
+      let partidaActiva = detalle;
+
+      if (detalle.estado === 'PENDIENTE') {
+        const reanudada = await api.reanudar(id);
+        partidaActiva = {
+          ...detalle,
+          ...reanudada,
+          jugadas: detalle.jugadas || [],
+        };
+      }
+
+      const modoFront = detalle.modo?.toLowerCase() === 'local' ? 'jugador' : detalle.modo?.toLowerCase();
+      const colorHumano = (detalle.tipoNegras === 'HUMAN' && detalle.tipoBlancas !== 'HUMAN') ? 'b' : 'w';
+      const fen = partidaActiva.fen || POSICION_INICIAL;
+      const jugadas = partidaActiva.jugadas || [];
+
+      setPartida({
+        id: partidaActiva.id,
+        modo: modoFront || 'jugador',
+        colorHumano,
+        fen,
+        estado: partidaActiva.estado || 'EN_PROGRESO',
+        jugadas,
+        cierre: partidaActiva.estado === 'FINALIZADA'
+          ? { resultado: partidaActiva.resultado, motivo: null }
+          : null,
+      });
+
+      setCargando(false);
+
+      if (
+        partidaActiva.estado === 'EN_PROGRESO' &&
+        modoFront !== 'jugador' &&
+        turnoDesdeFen(fen) !== colorHumano
+      ) {
+        await pedirJugadaMaquina(partidaActiva.id);
+      }
+
+      return partidaActiva;
+    } catch (fallo) {
+      mostrarError(fallo);
+      setCargando(false);
+      throw fallo;
+    }
+  };
+
   const enviarJugada = async (desde, hasta, promocion) => {
     setCargando(true);
     setError(null);
@@ -186,6 +238,17 @@ export const usePartida = (api) => {
     }
   };
 
+  const terminarPorTiempo = (colorGanador) => {
+    setPartida((actual) => ({
+      ...actual,
+      estado: 'FINALIZADA',
+      cierre: {
+        resultado: colorGanador === 'w' ? '1-0' : '0-1',
+        motivo: 'TIMEOUT',
+      },
+    }));
+  };
+
   const guardarYSalir = async () => {
     setCargando(true);
     setError(null);
@@ -217,13 +280,16 @@ export const usePartida = (api) => {
     error,
     puedeJugar,
     finalizada,
+    pausada,
     colorRival: colorOpuesto(partida.colorHumano),
     iniciar,
+    cargarOReanudar,
     alTocarCasilla,
     elegirCoronacion,
     cancelarCoronacion,
     reintentarMaquina,
     rendirse,
+    terminarPorTiempo,
     guardarYSalir,
     descartar,
     limpiarError: () => setError(null),

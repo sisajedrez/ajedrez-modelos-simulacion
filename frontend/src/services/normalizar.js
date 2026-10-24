@@ -26,6 +26,8 @@ export const normalizarPartida = (datos) => {
     modo: partida.mode,
     nombreBlancas: partida.whitePlayerName,
     nombreNegras: partida.blackPlayerName,
+    tipoBlancas: partida.whiteType,
+    tipoNegras: partida.blackType,
     jugadas: lista(partida.moves).map(normalizarJugadaDeLista),
     errorMotor: partida.engineError
       ? { codigo: partida.engineError.code, reintentable: partida.engineError.retryable !== false }

@@ -10,6 +10,7 @@ const MOTIVOS = [
   [/STALEMATE|AHOGADO/, 'rey ahogado'],
   [/CHECKMATE|JAQUE|^MATE/, 'jaque mate'],
   [/RESIGN|ABANDON|ABAND/, 'abandono'],
+  [/TIMEOUT|TIEMPO/, 'tiempo'],
   [/REPETITION|REPETICI/, 'triple repetición'],
   [/FIFTY|50/, 'regla de los 50 movimientos'],
   [/INSUFFICIENT|MATERIAL/, 'material insuficiente'],
