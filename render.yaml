@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: ajedrez-backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: pnpm install
+    startCommand: node src/server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: DATABASE_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: STOCKFISH_MOVETIME_MS
+        value: "1000"
+      - key: STOCKFISH_TIMEOUT_MS
+        value: "3000"
+      - key: STOCKFISH_FALLBACK_SKILL_LEVEL
+        value: "0"

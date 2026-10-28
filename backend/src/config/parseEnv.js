@@ -5,8 +5,8 @@ const optional = (schema) =>
   z.preprocess((v) => (v === '' ? undefined : v), schema.optional());
 
 const schema = z.object({
-  HOST: z.string().min(1),
-  PORT: z.coerce.number().int().min(1).max(65535),
+  HOST: z.string().min(1).default('0.0.0.0'),
+  PORT: z.coerce.number().int().min(1).max(65535).default(3001),
   FRONTEND_URL: z.url(),
   DATABASE_URL: z.string().min(1),
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
