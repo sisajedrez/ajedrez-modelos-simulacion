@@ -9,7 +9,15 @@ import { errorHandler, notFoundHandler } from './errors/errorHandler.js';
 
 export function createApp({ frontendUrl, checkDb, checkAi, gestor, historial, pgnService, difficultyService }) {
   const app = express();
-  app.use(cors({ origin: (origin, cb) => cb(null, origin === frontendUrl) }));
+  const allowedOrigin = frontendUrl ? frontendUrl.replace(/\/+$/, '') : '';
+  app.use(
+    cors({
+      origin: (origin, cb) => {
+        if (!origin) return cb(null, true);
+        cb(null, origin.replace(/\/+$/, '') === allowedOrigin);
+      },
+    }),
+  );
   // PGN import accepts up to ~200KB of text; the zod schema enforces the exact limit.
   app.use(express.json({ limit: '300kb' }));
   app.use(createHealthRouter({ checkDb, checkAi }));
