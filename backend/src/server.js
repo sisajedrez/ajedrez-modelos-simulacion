@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { config } from './config/env.js';
 import { checkConnection, closePool, pool, withTransaction } from './repositories/db.js';
 import { GameRepository } from './repositories/GameRepository.js';
@@ -22,6 +24,17 @@ const gameRepo = new GameRepository(pool);
 const moveRepo = new MoveRepository(pool);
 const pgnService = new PgnService({ gameRepo, moveRepo, withTransaction });
 const historial = new ServicioHistorial({ gameRepo, moveRepo, pgnService });
+const defaultStockfishPath = process.platform === 'win32' ? './bin/stockfish.exe' : './bin/stockfish';
+const resolvedStockfishPath =
+  config.stockfishPath ||
+  (fs.existsSync(path.resolve(process.cwd(), defaultStockfishPath)) ? defaultStockfishPath : undefined);
+
+if (resolvedStockfishPath) {
+  console.log(`Stockfish configured: ${resolvedStockfishPath}`);
+} else {
+  console.warn('Stockfish not configured or binary not found. Engine moves will return 503.');
+}
+
 const gestor = new GestorDePartida({
   gameRepo,
   moveRepo,
@@ -32,7 +45,7 @@ const gestor = new GestorDePartida({
     aiAdapterFactory: newAiAdapter,
     adapterFactory: ({ skillLevel }) =>
       new StockfishAdapter({
-        command: config.stockfishPath,
+        command: resolvedStockfishPath,
         movetimeMs: config.stockfishMovetimeMs,
         timeoutMs: config.stockfishTimeoutMs,
         skillLevel,

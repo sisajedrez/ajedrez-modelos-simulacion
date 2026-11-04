@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     rootDir: backend
-    buildCommand: pnpm install
+    buildCommand: pnpm install && node scripts/setup-stockfish.js
     startCommand: node src/server.js
     healthCheckPath: /health
     envVars:
@@ -16,6 +16,8 @@ services:
         sync: false
       - key: FRONTEND_URL
         sync: false
+      - key: STOCKFISH_PATH
+        value: ./bin/stockfish
       - key: STOCKFISH_MOVETIME_MS
         value: "1000"
       - key: STOCKFISH_TIMEOUT_MS
