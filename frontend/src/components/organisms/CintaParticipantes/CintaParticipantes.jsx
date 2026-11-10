@@ -1,7 +1,7 @@
 const CintaParticipantes = ({ participantes = [] }) => {
   const nombres = participantes.length > 0
     ? participantes
-    : ['Rol: nombre, nombre, nombre.'];
+    : ['Universidad Nacional de Villa Mercedes (UNViMe)'];
 
   return (
     <div className="cinta-participantes" aria-label="Participantes del proyecto">

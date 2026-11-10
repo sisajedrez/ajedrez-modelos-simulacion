@@ -560,14 +560,14 @@ Respecto de la v1.0 se agregaron `backend/src/repositories/` (patrón Repository
 | Carpeta / archivo | Responsables |
 |---|---|
 | `frontend/` | Frontend *(a completar)*; especificaciones visuales: Perla Quispe (Diseño Gráfico & UX) |
-| `backend/` | Marcos Teixido, German Velazquez, Axel Nievas |
+| `backend/` | Marcos Teixido, German Velazquez, Axel Nievas, Gonzalo Amaya |
 | `backend/src/engines/` | Backend y Simulación (quién mantiene `MotorStockfish` está sin definir; sección 13) |
 | `ai-service/` | Paula Chicher, Lazaro Sanchez, Luciano Sigot |
-| `db/` | Mateo Vanden, Valentín Faba, Máximo Vinuesa |
+| `db/` | Mateo Vanden |
 | `docs/arquitectura.md` | Thomas Cardarelli |
-| `docs/diseno-tecnico.md` | Nacho Gaynor, Gonzalo Rozandal |
+| `docs/diseno-tecnico.md` | Ignacio Gaynor, Gonzalo Rozandal |
 | `docs/analisis-requisitos.md` | Análisis y Requisitos *(a completar)* |
-| `docs/informe-QA.md`, `tests-integracion/` | Agustín Lucero, Franco Calizaya |
+| `docs/informe-QA.md`, `tests-integracion/` | Agustín Lucero, Franco Calizaya, Valentín Faba |
 | `docs/documento-GC.md`, `.github/`, `docker-compose.yml`, archivos de raíz | Facundo Olivera |
 | Aprobación de PR | Tech Lead *(nombre a completar)* |
 

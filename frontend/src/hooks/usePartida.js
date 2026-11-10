@@ -14,6 +14,9 @@ const estadoInicial = {
   cierre: null,
 };
 
+const TIEMPO_PENSAR_MAQUINA_MS = 1500;
+const esperar = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const colorDePieza = (pieza) => (pieza === pieza.toUpperCase() ? 'w' : 'b');
 
 export const usePartida = (api) => {
@@ -58,7 +61,11 @@ export const usePartida = (api) => {
     setPensando(true);
     setError(null);
     try {
-      aplicarJugada(await api.jugarMaquina(id));
+      const [resultado] = await Promise.all([
+        api.jugarMaquina(id),
+        esperar(TIEMPO_PENSAR_MAQUINA_MS),
+      ]);
+      aplicarJugada(resultado);
     } catch (fallo) {
       mostrarError(fallo, 'motor');
     } finally {

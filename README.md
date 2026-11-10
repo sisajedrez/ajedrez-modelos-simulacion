@@ -325,9 +325,9 @@ tests-integracion/  Pruebas de integración (QA)
 
 | Arquitectura | Thomas Cardarelli |
 
-| Diseño Técnico | Nacho Gaynor, Gonzalo Rozandal |
+| Diseño Técnico | Ignacio Gaynor, Gonzalo Rozandal |
 
-| Modelado y Gestión de Datos | Mateo Vanden, Valentín Faba, Máximo Vinuesa |
+| Modelado y Gestión de Datos | Mateo Vanden |
 
 | Diseño Gráfico & UX | Perla Quispe |
 
@@ -335,8 +335,8 @@ tests-integracion/  Pruebas de integración (QA)
 
 | Frontend | Agustin Rivarola, Tomas Picco, Santiago Ledesma |
 
-| Desarrollo Backend | Marcos Teixido, German Velazquez, Axel Nievas | Máximo Vinuesa |
+| Desarrollo Backend | Marcos Teixido, German Velazquez, Axel Nievas, Máximo Vinuesa, Gonzalo Amaya |
 
 | Desarrollo Simulación (IA) | Paula Chiecher, Lazaro Sanchez, Luciano Sigot |
 
-| Calidad y Pruebas (QA) | Agustín Lucero, Franco Calizaya |
+| Calidad y Pruebas (QA) | Agustín Lucero, Franco Calizaya, Valentín Faba |

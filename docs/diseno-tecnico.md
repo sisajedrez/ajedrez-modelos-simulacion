@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Responsables | Nacho Gaynor, Gonzalo Rozandal |
+| Responsables | Ignacio Gaynor, Gonzalo Rozandal |
 | Versión | *(pegar la versión vigente)* |
 | Última actualización | *(fecha)* |
 

@@ -24,8 +24,18 @@ import { turnoDesdeFen } from '../../utils/traductores.js';
 import { obtenerOpcionesFaltantes } from '../../utils/validarConfiguracion.js';
 
 const participantes = [
-  'Rol: nombre, nombre, nombre.',
   'Universidad Nacional de Villa Mercedes (UNViMe)',
+  'Tech Lead: Máximo Vinuesa, Bianca Torres',
+  'Análisis y Requisitos: Facundo Rojo, Andrés Rodríguez',
+  'Arquitectura: Thomas Cardarelli',
+  'Diseño Técnico: Ignacio Gaynor, Gonzalo Rozandal',
+  'Modelado y Gestión de Datos: Mateo Vanden',
+  'Diseño Gráfico & UX: Perla Quispe',
+  'Gestión de la Configuración: Facundo Olivera',
+  'Frontend: Agustín Rivarola, Tomás Picco, Santiago Ledesma',
+  'Desarrollo Backend: Marcos Teixido, Germán Velázquez, Axel Nievas, Máximo Vinuesa, Gonzalo Amaya',
+  'Desarrollo Simulación (IA): Paula Chiecher, Lázaro Sánchez, Luciano Sigot',
+  'Calidad y Pruebas (QA): Agustín Lucero, Franco Calizaya, Valentín Faba',
 ];
 
 const nombresRival = {
@@ -96,7 +106,10 @@ const PaginaAjedrez = () => {
       : configuracion.color;
 
     const segs = (Number(configuracion.tiempo) || 10) * 60;
-    setTiempoBlancas(segs);
+    const segundosBlancasInicial = (configuracion.modo !== 'jugador' && colorElegido === 'b')
+      ? Math.max(0, segs - 1)
+      : segs;
+    setTiempoBlancas(segundosBlancasInicial);
     setTiempoNegras(segs);
 
     setCierreOculto(false);

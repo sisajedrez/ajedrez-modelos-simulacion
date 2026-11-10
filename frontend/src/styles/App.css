@@ -573,7 +573,7 @@
   color: var(--color-texto-secundario);
   font-size: 22px;
   white-space: nowrap;
-  animation: recorrer-cinta 40s linear infinite;
+  animation: recorrer-cinta 75s linear infinite;
 }
 
 .cinta-participantes__grupo {
