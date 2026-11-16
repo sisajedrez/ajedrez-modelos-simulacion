@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { mensajeDeError } from '../utils/mensajesError.js';
 import { colorOpuesto, esCoronacion, piezaEnCasilla, turnoDesdeFen } from '../utils/traductores.js';
 
@@ -24,11 +24,13 @@ export const usePartida = (api) => {
   const [pensando, setPensando] = useState(false);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState(null);
+  const [simulando, setSimulando] = useState(false);
 
   const finalizada = partida.estado === 'FINALIZADA';
   const pausada = partida.estado === 'PENDIENTE';
   const turno = turnoDesdeFen(partida.fen);
-  const esTurnoHumano = partida.modo === 'jugador' || turno === partida.colorHumano;
+  const esSimulacion = partida.modo === 'simulacion';
+  const esTurnoHumano = !esSimulacion && (partida.modo === 'jugador' || turno === partida.colorHumano);
   const puedeJugar = Boolean(partida.id) && !finalizada && !pausada
     && !pensando && !cargando && !coronacion && esTurnoHumano;
 
@@ -93,8 +95,13 @@ export const usePartida = (api) => {
         jugadas,
         cierre: null,
       });
+      if (modo === 'simulacion') {
+        setSimulando(true);
+      } else {
+        setSimulando(false);
+      }
       setCargando(false);
-      if (modo !== 'jugador' && turnoDesdeFen(fen) !== color) {
+      if (modo !== 'jugador' && modo !== 'simulacion' && turnoDesdeFen(fen) !== color) {
         await pedirJugadaMaquina(creada.id);
       }
       return true;
@@ -263,11 +270,32 @@ export const usePartida = (api) => {
     }
   };
 
+  useEffect(() => {
+    if (
+      !partida.id
+      || partida.modo !== 'simulacion'
+      || !simulando
+      || finalizada
+      || pausada
+      || pensando
+      || cargando
+    ) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      pedirJugadaMaquina(partida.id);
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, [partida.id, partida.modo, partida.fen, simulando, finalizada, pausada, pensando, cargando]);
+
   const descartar = () => {
     setPartida(estadoInicial);
     limpiarSeleccion();
     setCoronacion(null);
     setError(null);
+    setSimulando(false);
   };
 
   return {
@@ -281,6 +309,11 @@ export const usePartida = (api) => {
     puedeJugar,
     finalizada,
     pausada,
+    simulando,
+    esSimulacion,
+    pausarSimulacion: () => setSimulando(false),
+    reanudarSimulacion: () => setSimulando(true),
+    avanzarSimulacion: () => pedirJugadaMaquina(partida.id),
     colorRival: colorOpuesto(partida.colorHumano),
     iniciar,
     cargarOReanudar,

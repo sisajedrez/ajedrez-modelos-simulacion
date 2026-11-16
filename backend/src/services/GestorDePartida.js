@@ -43,12 +43,41 @@ export class GestorDePartida {
       }
     }
     const vsEngine = mode === 'STOCKFISH' || mode === 'AI';
-    if (vsEngine && !profile) {
+    const isSimulation = mode === 'SIMULATION';
+    if ((vsEngine || isSimulation) && !profile) {
       throw new AppError('VALIDATION_ERROR', `difficulty is required for ${mode} games`, 400);
     }
 
     // Fail early (501) for unsupported modes, before touching the database.
-    const session = this.factory.create(mode, { skillLevel: profile?.skillLevel, difficulty: profile?.name });
+    const session = this.factory.create(mode, {
+      skillLevel: profile?.skillLevel,
+      difficulty: profile?.name,
+      playerColor,
+    });
+
+    if (isSimulation) {
+      const stockfishWhite = playerColor === 'WHITE';
+      let game;
+      try {
+        game = await this.gameRepo.create({
+          whitePlayerName: stockfishWhite ? 'Stockfish' : 'IA UNViMe',
+          blackPlayerName: stockfishWhite ? 'IA UNViMe' : 'Stockfish',
+          mode: 'SIMULATION',
+          whiteType: stockfishWhite ? 'ENGINE' : 'AI',
+          blackType: stockfishWhite ? 'AI' : 'ENGINE',
+          difficultyProfileId: profile.id,
+          currentFen: START_FEN,
+        });
+      } catch (err) {
+        await Promise.all([
+          session.whiteOpponent?.dispose?.(),
+          session.blackOpponent?.dispose?.(),
+        ]);
+        throw err;
+      }
+      this.registry.set(game.id, session);
+      return toDto(game);
+    }
 
     const humanWhite = playerColor === 'WHITE';
     const other = mode === 'AI' ? 'AI' : vsEngine ? 'Stockfish' : 'Player 2';
@@ -106,13 +135,14 @@ export class GestorDePartida {
       throw new AppError('SESSION_INCONSISTENT', 'Stored moves do not match the game position', 500);
     }
     let profile = null;
-    if ((game.mode === 'STOCKFISH' || game.mode === 'AI') && game.difficultyProfileId) {
+    if ((game.mode === 'STOCKFISH' || game.mode === 'AI' || game.mode === 'SIMULATION') && game.difficultyProfileId) {
       profile = await this.difficultyRepo.findById(game.difficultyProfileId);
     }
     return this.factory.create(game.mode, {
       tablero,
       skillLevel: profile?.skillLevel,
       difficulty: profile?.name,
+      playerColor: game.whiteType === 'ENGINE' ? 'WHITE' : 'BLACK',
     });
   }
 
@@ -121,13 +151,18 @@ export class GestorDePartida {
     const session = this.registry.get(gameId);
     this.registry.delete(gameId);
     try {
-      await session?.opponent?.dispose?.();
+      await Promise.all([
+        session?.opponent?.dispose?.(),
+        session?.whiteOpponent?.dispose?.(),
+        session?.blackOpponent?.dispose?.(),
+      ]);
     } catch {
       // Disposal is best effort; the session is gone either way.
     }
   }
 
   static #turnoDelMotor(game) {
+    if (game.mode === 'SIMULATION') return true;
     if (game.mode !== 'STOCKFISH' && game.mode !== 'AI') return false;
     const type = turnoDesdeFEN(game.currentFen) === 'WHITE' ? game.whiteType : game.blackType;
     return type === 'ENGINE' || type === 'AI';
@@ -204,15 +239,25 @@ export class GestorDePartida {
     if (!GestorDePartida.#turnoDelMotor(game)) {
       throw new AppError('NOT_ENGINE_TURN', "It is not the engine's turn", 409);
     }
-    const { tablero, opponent } = await this.#sesion(game);
+    const session = await this.#sesion(game);
+    const { tablero } = session;
+    const currentTurn = turnoDesdeFEN(tablero.fen());
+    const opponent = session.whiteOpponent && session.blackOpponent
+      ? (currentTurn === 'WHITE' ? session.whiteOpponent : session.blackOpponent)
+      : session.opponent;
+
     const inicio = Date.now();
     const movimiento = await opponent.getNextMove(tablero.fen());
     const timeSpentMs = Date.now() - inicio;
     // AI opponents report where the move came from (history | openings | fallback).
     const { source, ...jugada } = movimiento ?? {};
+    const isAiTurn = game.mode === 'SIMULATION'
+      ? (currentTurn === 'WHITE' ? game.whiteType === 'AI' : game.blackType === 'AI')
+      : game.mode === 'AI';
+
     return this.#aplicarJugada(gameId, tablero, jugada, {
       timeSpentMs,
-      engineSource: game.mode === 'AI' ? (source ?? 'fallback') : 'stockfish',
+      engineSource: isAiTurn ? (source ?? 'fallback') : 'stockfish',
       onIllegal: () => new AppError('ENGINE_ILLEGAL_MOVE', 'Engine produced an illegal move', 500, false),
     });
   }

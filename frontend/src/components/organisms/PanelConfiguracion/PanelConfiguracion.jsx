@@ -10,6 +10,7 @@ const grupos = [
       { valor: 'jugador', etiqueta: 'vs Jugador' },
       { valor: 'stockfish', etiqueta: 'vs Stockfish' },
       { valor: 'unvime', etiqueta: 'vs IA UNViMe' },
+      { valor: 'simulacion', etiqueta: 'Stockfish vs IA Propia' },
     ],
   },
   {

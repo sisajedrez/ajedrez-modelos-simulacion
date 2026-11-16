@@ -8,14 +8,18 @@ export const idParamSchema = z.object({ id: z.uuid() });
 
 export const createGameSchema = z
   .object({
-    mode: z.enum(['LOCAL', 'STOCKFISH', 'AI']),
-    alias: z.string().trim().min(1).max(100),
+    mode: z.enum(['LOCAL', 'STOCKFISH', 'AI', 'SIMULATION']),
+    alias: z.string().trim().min(1).max(100).optional(),
     difficulty: z.enum(['FACIL', 'MEDIO', 'DIFICIL']).optional(),
     playerColor: z.enum(['WHITE', 'BLACK']).default('WHITE'),
   })
   .refine((v) => v.mode === 'LOCAL' || v.difficulty !== undefined, {
     path: ['difficulty'],
     message: 'difficulty is required when mode is not LOCAL',
+  })
+  .refine((v) => v.mode === 'SIMULATION' || (typeof v.alias === 'string' && v.alias.length > 0), {
+    path: ['alias'],
+    message: 'alias is required',
   });
 
 export const moveSchema = z.object({
@@ -27,7 +31,7 @@ export const moveSchema = z.object({
 export const legalMovesQuerySchema = z.object({ square });
 
 export const listGamesQuerySchema = z.object({
-  mode: z.enum(['LOCAL', 'STOCKFISH', 'AI']).optional(),
+  mode: z.enum(['LOCAL', 'STOCKFISH', 'AI', 'SIMULATION']).optional(),
   difficulty: z.enum(['FACIL', 'MEDIO', 'DIFICIL']).optional(),
   status: z.enum(['EN_PROGRESO', 'PENDIENTE', 'FINALIZADA']).optional(),
   result: z.enum(['1-0', '0-1', '1/2-1/2']).optional(),

@@ -16,6 +16,7 @@ describe('traductores de valores UI ↔ API', () => {
     assert.equal(modoAApi('jugador'), 'LOCAL');
     assert.equal(modoAApi('stockfish'), 'STOCKFISH');
     assert.equal(modoAApi('unvime'), 'AI');
+    assert.equal(modoAApi('simulacion'), 'SIMULATION');
     assert.equal(modoAApi('otro'), undefined);
   });
 

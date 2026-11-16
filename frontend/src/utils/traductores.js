@@ -1,6 +1,6 @@
 // Traduce entre los valores de la interfaz y los de la API.
 
-const MODOS_A_API = { jugador: 'LOCAL', stockfish: 'STOCKFISH', unvime: 'AI' };
+const MODOS_A_API = { jugador: 'LOCAL', stockfish: 'STOCKFISH', unvime: 'AI', simulacion: 'SIMULATION' };
 
 export const modoAApi = (modo) => MODOS_A_API[modo];
 

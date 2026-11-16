@@ -22,6 +22,8 @@ export class SessionRegistry {
   async disposeAll() {
     const sessions = [...this.#sessions.values()];
     this.#sessions.clear();
-    await Promise.allSettled(sessions.map((s) => s.opponent?.dispose?.()));
+    await Promise.allSettled(
+      sessions.flatMap((s) => [s.opponent?.dispose?.(), s.whiteOpponent?.dispose?.(), s.blackOpponent?.dispose?.()])
+    );
   }
 }

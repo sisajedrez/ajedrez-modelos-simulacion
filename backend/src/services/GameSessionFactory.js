@@ -16,7 +16,7 @@ export class GameSessionFactory {
 
   // `tablero` lets callers supply a rebuilt board (e.g. from move history).
   // `skillLevel` comes from the game's difficulty profile; `difficulty` is its name (AI mode).
-  create(mode, { tablero, skillLevel, difficulty } = {}) {
+  create(mode, { tablero, skillLevel, difficulty, playerColor = 'WHITE' } = {}) {
     if (mode === 'LOCAL') {
       return { tablero: tablero ?? new Tablero(), opponent: new HumanOpponent() };
     }
@@ -40,6 +40,24 @@ export class GameSessionFactory {
           fallbackFactory: () =>
             new StockfishOpponent({ adapter: this.adapterFactory({ skillLevel: level }), skillLevel: level }),
         }),
+      };
+    }
+    if (mode === 'SIMULATION' && this.adapterFactory && this.aiAdapterFactory) {
+      const level = skillLevel ?? this.fallbackSkillLevel;
+      const stockfishAdapter = this.adapterFactory({ skillLevel: level });
+      const stockfishOpponent = new StockfishOpponent({ adapter: stockfishAdapter, skillLevel: level });
+      const aiOpponent = new CustomAIOpponent({
+        adapter: this.aiAdapterFactory(),
+        difficulty,
+        logger: this.logger,
+        fallbackFactory: () =>
+          new StockfishOpponent({ adapter: this.adapterFactory({ skillLevel: this.fallbackSkillLevel }), skillLevel: this.fallbackSkillLevel }),
+      });
+      const stockfishIsWhite = playerColor === 'WHITE';
+      return {
+        tablero: tablero ?? new Tablero(),
+        whiteOpponent: stockfishIsWhite ? stockfishOpponent : aiOpponent,
+        blackOpponent: stockfishIsWhite ? aiOpponent : stockfishOpponent,
       };
     }
     throw new AppError('MODE_NOT_AVAILABLE', `Game mode ${mode} is not available yet`, 501);
