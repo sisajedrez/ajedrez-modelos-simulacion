@@ -1,22 +1,67 @@
-/* =============================================================================
-   tokens.css — Variables de diseño (fuente: 05 · Diseño Gráfico & UX, Perla Quispe)
-   Solo van valores que UX especificó. Lo que falta se marca como PENDIENTE: no se inventa.
-   Los componentes usan estas variables; nunca un color o una fuente escritos a mano.
-   ============================================================================= */
-
 :root {
-  /* --- Color --- */
-  --color-fondo: #0c0f1e;              /* Color de fondo de las pantallas */
-  --color-contorno-accion: #312525;    /* Contorno de "Nueva Partida" y de su botón */
-  --color-vidrio: rgb(231 122 247 / 0.3); /* E77AF7 al 30%: botón "vidrio difuso" */
-  --color-contorno-texto: #000000;     /* Contorno/sombra de "Ajedrez UNViMe" y "¡Bienvenido!" */
-  /* PENDIENTE (UX): hex de Fácil / Medio / Difícil, de las casillas del tablero y del texto. */
+  --color-fondo: #0c0f1e;
+  --color-casilla-clara: #f0d9b5;
+  --color-casilla-oscura: #b58863;
+  --color-morado: #4b2d5c;
+  --color-panel-oscuro: #140a24;
+  --color-panel-superior: #34204a;
+  --color-panel-inferior: #25163a;
+  --color-panel-jugadas: #3f2a52;
+  --color-panel-jugadas-interior: #12061f;
+  --color-panel-dialogo: #10051d;
+  --color-borde-dialogo: #271538;
+  --color-confeti-uno: #ffb703;
+  --color-confeti-dos: #00c2a8;
+  --color-confeti-tres: #ff4d8d;
+  --color-confeti-cuatro: #7868ff;
+  --color-confeti-cinco: #ff6b35;
+  --color-contorno-accion: #312525;
+  --color-contorno-texto: #000;
+  --color-texto: #fff;
+  --color-texto-secundario: #b9b6c6;
+  --color-vidrio-foco: #e77af7;
+  --color-facil: #5cb85c;
+  --color-medio: #d3d26a;
+  --color-dificil: #7a3030;
+  --color-piezas-blancas: #c9c9d2;
+  --color-piezas-negras: #0c0c10;
+  --color-borde-negro: #555;
+  --color-reloj-vacio: #ff2a2a;
+  --color-casilla-seleccionada: rgb(231 122 247 / 60%);
+  --color-destino-jugada: rgb(60 20 80 / 45%);
+  --color-borde-panel-jugadas: rgb(0 0 0 / 40%);
+  --color-coordenada: rgb(120 80 50 / 80%);
 
-  /* --- Tipografía --- */
-  --fuente-titulo: "Jersey 20", sans-serif; /* Solo "Ajedrez UNViMe" */
-  --fuente-texto: "Jersey 15", sans-serif;  /* Todo lo demás */
+  --fuente-titulo: "Jersey 20", sans-serif;
+  --fuente-texto: "Jersey 15", sans-serif;
+  --fuente-piezas: "Segoe UI Symbol", "DejaVu Sans", "Noto Sans Symbols 2", sans-serif;
 
-  /* --- Forma y opacidad --- */
-  --opacidad-tablero-menu: 0.9;        /* Tablero decorativo del menú, para no quitar atención al texto */
-  --radio-esquina: 8px;                /* Esquinas "ligeramente redondeadas" (UX no fija el valor: ajustar) */
+  --radio-esquina: 8px;
+  --radio-pequeno: 6px;
+  --radio-grupo: 10px;
+  --radio-panel: 14px;
+  --radio-tablero: 14px;
+  --radio-confeti: 2px;
+  --radio-circular: 50%;
+  --opacidad-tablero-menu: 0.9;
+
+  --color-vidrio: rgb(231 122 247 / 30%);
+  --vidrio-brillante: rgb(231 122 247 / 38%);
+  --vidrio-suave: rgb(231 122 247 / 22%);
+  --vidrio-hover: rgb(231 122 247 / 45%);
+  --vidrio-foco: rgb(231 122 247 / 67%);
+  --brillo-superficie: rgb(255 255 255 / 35%);
+  --sombra-media: rgb(0 0 0 / 35%);
+  --sombra-fuerte: rgb(0 0 0 / 55%);
+  --sombra-tablero: rgb(0 0 0 / 50%);
+  --velo-modal: rgb(7 5 19 / 88%);
+  --brillo-modal: rgb(196 68 219 / 35%);
+  --fondo-dialogo: rgb(22 8 38 / 96%);
+  --borde-dialogo: rgb(231 122 247 / 30%);
+  --borde-opcion: rgb(0 0 0 / 35%);
+  --borde-seleccionado: rgb(255 255 255 / 40%);
+  --particula-fondo: rgb(231 122 247 / 45%);
+  --particula-brillo: rgb(231 122 247 / 55%);
+  --fondo-cinta: rgb(12 15 30 / 85%);
+  --alto-cinta: 44px;
 }

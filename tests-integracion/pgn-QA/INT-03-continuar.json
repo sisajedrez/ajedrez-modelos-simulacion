@@ -1,0 +1,32 @@
+[
+ {
+  "ply": 1,
+  "from": "b5",
+  "to": "a4",
+  "promotion": ""
+ },
+ {
+  "ply": 2,
+  "from": "g8",
+  "to": "f6",
+  "promotion": ""
+ },
+ {
+  "ply": 3,
+  "from": "e1",
+  "to": "g1",
+  "promotion": ""
+ },
+ {
+  "ply": 4,
+  "from": "f8",
+  "to": "e7",
+  "promotion": ""
+ },
+ {
+  "ply": 5,
+  "from": "f1",
+  "to": "e1",
+  "promotion": ""
+ }
+]

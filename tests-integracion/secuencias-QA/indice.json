@@ -1,0 +1,243 @@
+[
+ {
+  "id": "RN-02B-1a",
+  "descripcion": "Enroque corto valido (O-O)",
+  "archivo_preparacion": "RN-02B-1a.json",
+  "jugadas_de_preparacion": 6,
+  "jugada_a_probar": {
+   "from": "e1",
+   "to": "g1"
+  },
+  "debe_ser_legal": true,
+  "resultado_final_esperado": null,
+  "esperado": "Aceptado. Rey en g1 y torre en f1. Se pierden los derechos de enroque blancos. Anotacion O-O.",
+  "fen_esperado_tras_la_jugada_(tablero turno enroques)": "rnbqk2r/pppp1ppp/5n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQ1RK1 b kq"
+ },
+ {
+  "id": "RN-02B-1b",
+  "descripcion": "Enroque largo valido (O-O-O)",
+  "archivo_preparacion": "RN-02B-1b.json",
+  "jugadas_de_preparacion": 8,
+  "jugada_a_probar": {
+   "from": "e1",
+   "to": "c1"
+  },
+  "debe_ser_legal": true,
+  "resultado_final_esperado": null,
+  "esperado": "Aceptado. Rey en c1 y torre en d1. Anotacion O-O-O.",
+  "fen_esperado_tras_la_jugada_(tablero turno enroques)": "r3kbnr/pppqpppp/2n5/3p1b2/3P1B2/2N5/PPPQPPPP/2KR1BNR b kq"
+ },
+ {
+  "id": "RN-02B-2a",
+  "descripcion": "Enroque ilegal: el rey ya se movio (volvio a e1)",
+  "archivo_preparacion": "RN-02B-2a.json",
+  "jugadas_de_preparacion": 10,
+  "jugada_a_probar": {
+   "from": "e1",
+   "to": "g1"
+  },
+  "debe_ser_legal": false,
+  "resultado_final_esperado": null,
+  "esperado": "Rechazado. FEN, turno y relojes sin cambios. e1g1 no figura en legal-moves."
+ },
+ {
+  "id": "RN-02B-2b",
+  "descripcion": "Enroque ilegal: la torre ya se movio (volvio a h1)",
+  "archivo_preparacion": "RN-02B-2b.json",
+  "jugadas_de_preparacion": 10,
+  "jugada_a_probar": {
+   "from": "e1",
+   "to": "g1"
+  },
+  "debe_ser_legal": false,
+  "resultado_final_esperado": null,
+  "esperado": "Rechazado. FEN y turno sin cambios."
+ },
+ {
+  "id": "RN-02B-3a",
+  "descripcion": "Enroque ilegal: el rey esta en jaque (alfil negro en b4)",
+  "archivo_preparacion": "RN-02B-3a.json",
+  "jugadas_de_preparacion": 8,
+  "jugada_a_probar": {
+   "from": "e1",
+   "to": "g1"
+  },
+  "debe_ser_legal": false,
+  "resultado_final_esperado": null,
+  "esperado": "Rechazado por jaque. Las blancas deben resolver el jaque con otra jugada."
+ },
+ {
+  "id": "RN-02B-3b",
+  "descripcion": "Enroque ilegal: la casilla de paso f1 esta atacada (caballo negro en e3)",
+  "archivo_preparacion": "RN-02B-3b.json",
+  "jugadas_de_preparacion": 8,
+  "jugada_a_probar": {
+   "from": "e1",
+   "to": "g1"
+  },
+  "debe_ser_legal": false,
+  "resultado_final_esperado": null,
+  "esperado": "Rechazado: f1 atacada por el caballo."
+ },
+ {
+  "id": "RN-02B-3c",
+  "descripcion": "Enroque ilegal: la casilla destino g1 esta atacada (alfil negro en c5)",
+  "archivo_preparacion": "RN-02B-3c.json",
+  "jugadas_de_preparacion": 8,
+  "jugada_a_probar": {
+   "from": "e1",
+   "to": "g1"
+  },
+  "debe_ser_legal": false,
+  "resultado_final_esperado": null,
+  "esperado": "Rechazado: g1 atacada por el alfil."
+ },
+ {
+  "id": "RN-02B-4",
+  "descripcion": "Captura al paso valida",
+  "archivo_preparacion": "RN-02B-4.json",
+  "jugadas_de_preparacion": 4,
+  "jugada_a_probar": {
+   "from": "e5",
+   "to": "d6"
+  },
+  "debe_ser_legal": true,
+  "resultado_final_esperado": null,
+  "esperado": "Aceptado. Peon blanco en d6 y peon negro de d5 eliminado.",
+  "fen_esperado_tras_la_jugada_(tablero turno enroques)": "rnbqkbnr/1pp1pppp/p2P4/8/8/8/PPPP1PPP/RNBQKBNR b KQkq"
+ },
+ {
+  "id": "RN-02B-5",
+  "descripcion": "Captura al paso expirada (hubo otra jugada en el medio)",
+  "archivo_preparacion": "RN-02B-5.json",
+  "jugadas_de_preparacion": 6,
+  "jugada_a_probar": {
+   "from": "e5",
+   "to": "d6"
+  },
+  "debe_ser_legal": false,
+  "resultado_final_esperado": null,
+  "esperado": "Rechazado: el derecho expiro."
+ },
+ {
+  "id": "RN-02B-6",
+  "descripcion": "Promocion de peon (repetir 4 veces, en partidas nuevas, con q, r, b, n)",
+  "archivo_preparacion": "RN-02B-6.json",
+  "jugadas_de_preparacion": 8,
+  "jugada_a_probar": {
+   "from": "a7",
+   "to": "b8"
+  },
+  "debe_ser_legal": true,
+  "resultado_final_esperado": null,
+  "esperado": "Aceptado con cada pieza elegida. El peon pasa a ser esa pieza en b8 y captura el caballo negro.",
+  "promociones_a_probar": [
+   "q",
+   "r",
+   "b",
+   "n"
+  ]
+ },
+ {
+  "id": "RN-03-A1",
+  "descripcion": "Jaque mate (mate del pastor, ganan blancas)",
+  "archivo_preparacion": "RN-03-A1.json",
+  "jugadas_de_preparacion": 7,
+  "jugada_a_probar": null,
+  "debe_ser_legal": null,
+  "resultado_final_esperado": "mate",
+  "esperado": "Tras h5f7 la partida pasa a FINALIZADA, gana blancas por jaque mate."
+ },
+ {
+  "id": "RN-03-A2",
+  "descripcion": "Jaque mate (mate del loco, ganan negras)",
+  "archivo_preparacion": "RN-03-A2.json",
+  "jugadas_de_preparacion": 4,
+  "jugada_a_probar": null,
+  "debe_ser_legal": null,
+  "resultado_final_esperado": "mate",
+  "esperado": "Tras d8h4 la partida pasa a FINALIZADA, ganan negras por jaque mate."
+ },
+ {
+  "id": "RN-03-B",
+  "descripcion": "Rey ahogado (ahogado de Sam Loyd, 19 jugadas)",
+  "archivo_preparacion": "RN-03-B.json",
+  "jugadas_de_preparacion": 19,
+  "jugada_a_probar": null,
+  "debe_ser_legal": null,
+  "resultado_final_esperado": "ahogado",
+  "esperado": "Tras c8e6 es el turno de las negras, que no tienen jugadas legales y no estan en jaque: Tablas por rey ahogado. FINALIZADA."
+ },
+ {
+  "id": "RN-03-C",
+  "descripcion": "Triple repeticion (caballos de ida y vuelta)",
+  "archivo_preparacion": "RN-03-C.json",
+  "jugadas_de_preparacion": 8,
+  "jugada_a_probar": null,
+  "debe_ser_legal": null,
+  "resultado_final_esperado": "triple",
+  "esperado": "Al completar la jugada 8 la posicion inicial aparece por tercera vez: Tablas por repeticion. FINALIZADA."
+ },
+ {
+  "id": "RN-03-E",
+  "descripcion": "Material insuficiente (291 jugadas, termina en rey y caballo contra rey)",
+  "archivo_preparacion": "RN-03-E.json",
+  "jugadas_de_preparacion": 291,
+  "jugada_a_probar": null,
+  "debe_ser_legal": null,
+  "resultado_final_esperado": "material",
+  "esperado": "Tras la ultima jugada quedan rey y caballo contra rey: Tablas automaticas por material insuficiente. FINALIZADA. Antes de eso la partida no debe terminar."
+ },
+ {
+  "id": "PF-06-B-1",
+  "descripcion": "Peon de e2 intenta avanzar tres casillas (posicion inicial)",
+  "archivo_preparacion": null,
+  "jugadas_de_preparacion": 0,
+  "jugada_a_probar": {
+   "from": "e2",
+   "to": "e5"
+  },
+  "debe_ser_legal": false,
+  "resultado_final_esperado": null,
+  "esperado": "Rechazado con error claro (no 500). FEN, turno y relojes sin cambios."
+ },
+ {
+  "id": "PF-06-B-2",
+  "descripcion": "Mover una pieza negra en turno de blancas (posicion inicial)",
+  "archivo_preparacion": null,
+  "jugadas_de_preparacion": 0,
+  "jugada_a_probar": {
+   "from": "e7",
+   "to": "e5"
+  },
+  "debe_ser_legal": false,
+  "resultado_final_esperado": null,
+  "esperado": "Rechazado con error claro (no 500). FEN, turno y relojes sin cambios."
+ },
+ {
+  "id": "PF-06-B-3",
+  "descripcion": "Torre atraviesa una pieza propia (posicion inicial)",
+  "archivo_preparacion": null,
+  "jugadas_de_preparacion": 0,
+  "jugada_a_probar": {
+   "from": "a1",
+   "to": "a3"
+  },
+  "debe_ser_legal": false,
+  "resultado_final_esperado": null,
+  "esperado": "Rechazado con error claro (no 500). FEN, turno y relojes sin cambios."
+ },
+ {
+  "id": "PF-06-B-4",
+  "descripcion": "Dejar al rey en jaque: con el rey blanco en jaque (alfil negro en b4) jugar un peon que no lo resuelve",
+  "archivo_preparacion": "PF-06-B-4.json",
+  "jugadas_de_preparacion": 8,
+  "jugada_a_probar": {
+   "from": "a2",
+   "to": "a3"
+  },
+  "debe_ser_legal": false,
+  "resultado_final_esperado": null,
+  "esperado": "Rechazado con error claro (no 500). FEN, turno y relojes sin cambios."
+ }
+]

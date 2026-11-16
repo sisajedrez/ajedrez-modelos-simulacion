@@ -1,0 +1,7 @@
+# ==============================================================================
+# CODEOWNERS - Sistema de Ajedrez Local (Ajedrez UNViMe)
+# Referencia: docs/documento-GC.md (§9.2, §9.5, §10.1)
+# ==============================================================================
+
+# Revisores globales requeridos para todo el repositorio
+* @Maxivinuesa23 @biangt

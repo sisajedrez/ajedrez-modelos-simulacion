@@ -1,0 +1,8 @@
+.env
+.venv
+data/datasetchess.csv
+env
+__pycache__/
+.pytest_cache/
+models/out/
+training/out/

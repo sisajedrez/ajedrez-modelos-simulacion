@@ -1,0 +1,58 @@
+[
+ {
+  "id": "PF-IMP-01",
+  "archivo": "casos/PF-IMP-01_valido.pgn",
+  "esperado": "aceptar",
+  "descripcion": "PGN valido con metadatos completos (Event, Site, Date, White, Black, Result) y mate del pastor",
+  "verificar": "La partida queda FINALIZADA, resultado 1-0, 7 jugadas, jugadores Ana y Luis"
+ },
+ {
+  "id": "PF-IMP-02a",
+  "archivo": "casos/PF-IMP-02a_sintaxis-rota.pgn",
+  "esperado": "rechazar",
+  "descripcion": "PGN con cabeceras mal cerradas y texto roto",
+  "verificar": "Rechazo claro, sin error 500, y no se crea ninguna partida"
+ },
+ {
+  "id": "PF-IMP-02b",
+  "archivo": "casos/PF-IMP-02b_jugada-ilegal.pgn",
+  "esperado": "rechazar",
+  "descripcion": "PGN con una jugada imposible (2. Qh8)",
+  "verificar": "Rechazo claro, sin error 500, y no se crea ninguna partida"
+ },
+ {
+  "id": "PF-IMP-02c",
+  "archivo": "casos/PF-IMP-02c_estructura-incompleta.pgn",
+  "esperado": "rechazar",
+  "descripcion": "PGN con una variante sin cerrar",
+  "verificar": "Rechazo claro, sin error 500, y no se crea ninguna partida (o se acepta ignorando la variante: anotar cual)"
+ },
+ {
+  "id": "PF-IMP-02d",
+  "archivo": "casos/PF-IMP-02d_texto-no-pgn.pgn",
+  "esperado": "rechazar",
+  "descripcion": "Texto que no es un PGN",
+  "verificar": "Rechazo claro, sin error 500, y no se crea ninguna partida"
+ },
+ {
+  "id": "PF-IMP-03",
+  "archivo": "casos/PF-IMP-03_lichess-comentarios-variantes.pgn",
+  "esperado": "aceptar",
+  "descripcion": "PGN estilo Lichess con comentarios {...}, una variante (...) y cabeceras extra",
+  "verificar": "Se importa la linea principal (16 jugadas) sin fallar; los comentarios y la variante se omiten o se guardan"
+ },
+ {
+  "id": "INT-03",
+  "archivo": "casos/INT-03_en-curso.pgn",
+  "esperado": "aceptar",
+  "descripcion": "PGN de una partida en curso (Result *), 6 jugadas",
+  "verificar": "Segun el codigo del backend queda PENDIENTE; se puede reanudar y seguir jugando"
+ },
+ {
+  "id": "EXTRA",
+  "archivo": "casos/EXTRA_sin-cabeceras.pgn",
+  "esperado": "aceptar",
+  "descripcion": "Adicional (no esta en el plan): jugadas sin ninguna cabecera",
+  "verificar": "Anotar que hace el backend; no hay criterio definido"
+ }
+]

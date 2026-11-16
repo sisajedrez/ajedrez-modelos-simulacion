@@ -1,0 +1,50 @@
+[
+ {
+  "ply": 1,
+  "from": "e2",
+  "to": "e4",
+  "promotion": ""
+ },
+ {
+  "ply": 2,
+  "from": "e7",
+  "to": "e5",
+  "promotion": ""
+ },
+ {
+  "ply": 3,
+  "from": "g1",
+  "to": "f3",
+  "promotion": ""
+ },
+ {
+  "ply": 4,
+  "from": "b8",
+  "to": "c6",
+  "promotion": ""
+ },
+ {
+  "ply": 5,
+  "from": "f1",
+  "to": "c4",
+  "promotion": ""
+ },
+ {
+  "ply": 6,
+  "from": "g8",
+  "to": "f6",
+  "promotion": ""
+ },
+ {
+  "ply": 7,
+  "from": "d2",
+  "to": "d3",
+  "promotion": ""
+ },
+ {
+  "ply": 8,
+  "from": "f8",
+  "to": "b4",
+  "promotion": ""
+ }
+]
