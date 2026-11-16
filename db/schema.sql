@@ -8,7 +8,7 @@
 -- =============================================================================
 
 -- 1. Creación de tipos ENUM para asegurar consistencia de datos
-CREATE TYPE game_mode AS ENUM ('LOCAL', 'STOCKFISH', 'AI');
+CREATE TYPE game_mode AS ENUM ('LOCAL', 'STOCKFISH', 'AI', 'SIMULATION');
 CREATE TYPE player_type AS ENUM ('HUMAN', 'ENGINE', 'AI');
 CREATE TYPE game_status AS ENUM ('EN_PROGRESO', 'PENDIENTE', 'FINALIZADA');
 CREATE TYPE game_source AS ENUM ('USER', 'SEED');

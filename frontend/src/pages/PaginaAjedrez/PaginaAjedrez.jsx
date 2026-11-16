@@ -31,6 +31,7 @@ const participantes = [
 const nombresRival = {
   stockfish: 'Stockfish',
   unvime: 'IA UNViMe',
+  simulacion: 'IA UNViMe',
 };
 
 const PaginaAjedrez = () => {
@@ -100,9 +101,12 @@ const PaginaAjedrez = () => {
     setTiempoNegras(segs);
 
     setCierreOculto(false);
+    const alias = configuracion.modo === 'simulacion'
+      ? 'Simulador'
+      : (nombres.jugadorUno.trim() || 'Jugador 1');
     const creada = await juego.iniciar({
       modo: configuracion.modo,
-      alias: nombres.jugadorUno.trim() || 'Jugador 1',
+      alias,
       dificultad: configuracion.modo === 'jugador' ? '' : configuracion.dificultad,
       color: colorElegido,
     });
@@ -166,10 +170,13 @@ const PaginaAjedrez = () => {
     return () => clearInterval(interval);
   }, [pantalla, juego.finalizada, juego.pausada, juego.cargando, partidaGuardada, partida.fen]);
 
-  const nombreUno = nombres.jugadorUno.trim() || 'Jugador 1';
-  const rival = partida.modo === 'jugador'
-    ? nombres.jugadorDos.trim() || 'Jugador 2'
-    : nombresRival[partida.modo] || 'Jugador 2';
+  const esSimulacion = partida.modo === 'simulacion';
+  const nombreUno = esSimulacion
+    ? (partida.colorHumano === 'w' ? 'Stockfish' : 'IA UNViMe')
+    : (nombres.jugadorUno.trim() || 'Jugador 1');
+  const rival = esSimulacion
+    ? (partida.colorHumano === 'w' ? 'IA UNViMe' : 'Stockfish')
+    : (partida.modo === 'jugador' ? (nombres.jugadorDos.trim() || 'Jugador 2') : (nombresRival[partida.modo] || 'Jugador 2'));
   const opcionesFaltantes = obtenerOpcionesFaltantes(configuracion);
   const minutos = Number(configuracion.tiempo) || 0;
   const niveles = configuracion.modo && configuracion.modo !== 'jugador'
@@ -216,7 +223,16 @@ const PaginaAjedrez = () => {
 
   const estadoTablero = (() => {
     if (juego.cargando) return 'Conectando con el servidor…';
-    if (juego.pensando) return `${rival} está pensando…`;
+    if (juego.pensando) {
+      if (esSimulacion) {
+        const turnoActual = turnoDesdeFen(partida.fen);
+        const quien = turnoActual === 'w'
+          ? (partida.colorHumano === 'w' ? 'Stockfish' : 'IA UNViMe')
+          : (partida.colorHumano === 'w' ? 'IA UNViMe' : 'Stockfish');
+        return `${quien} está calculando jugada…`;
+      }
+      return `${rival} está pensando…`;
+    }
     return '';
   })();
 
@@ -251,19 +267,21 @@ const PaginaAjedrez = () => {
               etiqueta="Nombre del segundo jugador"
               minutos={minutos}
               nombre={
-                configuracion.modo === 'jugador'
-                  ? nombres.jugadorDos
-                  : nombresRival[configuracion.modo] || 'Jugador 2'
+                configuracion.modo === 'simulacion'
+                  ? 'IA UNViMe'
+                  : configuracion.modo === 'jugador'
+                    ? nombres.jugadorDos
+                    : nombresRival[configuracion.modo] || 'Jugador 2'
               }
               onCambiarNombre={(nombre) => cambiarNombre('jugadorDos', nombre)}
               onTerminarNombre={() => terminarNombre('jugadorDos', 'Jugador 2')}
             />
             <Tablero color={configuracion.color === 'b' ? 'b' : 'w'} />
             <PlacaJugador
-              editable
+              editable={configuracion.modo !== 'simulacion'}
               etiqueta="Nombre del primer jugador"
               minutos={minutos}
-              nombre={nombres.jugadorUno}
+              nombre={configuracion.modo === 'simulacion' ? 'Stockfish' : nombres.jugadorUno}
               onCambiarNombre={(nombre) => cambiarNombre('jugadorUno', nombre)}
               onTerminarNombre={() => terminarNombre('jugadorUno', 'Jugador 1')}
             />
@@ -300,11 +318,30 @@ const PaginaAjedrez = () => {
                 nombre={nombreUno}
                 segundos={segundosUno}
               />
-              {!juego.finalizada && (
+              {!juego.finalizada && !esSimulacion && (
                 <BotonRendirse
                   nombreJugador={nombreUno}
                   onRendirse={() => solicitarRendicion('jugadorUno', nombreUno)}
                 />
+              )}
+              {esSimulacion && !juego.finalizada && (
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    className="boton boton-pequeno"
+                    onClick={juego.simulando ? juego.pausarSimulacion : juego.reanudarSimulacion}
+                    type="button"
+                  >
+                    {juego.simulando ? '⏸ Pausar' : '▶ Reanudar'}
+                  </button>
+                  <button
+                    className="boton boton-pequeno"
+                    disabled={juego.simulando || juego.pensando || juego.cargando}
+                    onClick={juego.avanzarSimulacion}
+                    type="button"
+                  >
+                    ⏭ Jugada
+                  </button>
+                </div>
               )}
             </div>
             <p aria-live="polite" className="aviso-estado">{estadoTablero}</p>
